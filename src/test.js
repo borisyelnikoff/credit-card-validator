@@ -1,8 +1,8 @@
-// Full name with extension necessary for Node ESM module loader
-import luhn from "./luhn.js";
+import luhn from "./luhn.js"; // Extension necessary for Node ESM module loader
 import cardsData from "./cardsData.json";
+import { createCardValidator } from "./cardValidator.js";
 
-// luhn algorithm tests
+// Tests
 function verify(input, goal) {
   if (input === goal) {
     console.log("Gratulacje!");
@@ -12,12 +12,13 @@ function verify(input, goal) {
 }
 
 const { testNumbers } = cardsData;
-const testData = [
+
+// luhn algorithm tests
+let testData = [
   ...testNumbers.mastercard,
   ...testNumbers.visa,
   ...testNumbers.americanExpress,
 ];
-testData.forEach((item) => verify(luhn(item), 0));
 
 // Failing tests
 const invalidNumbers = [
@@ -25,5 +26,44 @@ const invalidNumbers = [
   testNumbers.visa[1] * 2,
   testNumbers.americanExpress[0] - 10538234,
 ];
+console.log("Luhn algorithm tests:");
+testData.forEach((cardNumber) => verify(luhn(cardNumber), 0));
 
-invalidNumbers.forEach((item) => verify(luhn(item), 0));
+const invalidNumsAssertions = [5, 1, 2];
+invalidNumbers.forEach((cardNumber, index) =>
+  verify(luhn(cardNumber), invalidNumsAssertions[index])
+);
+console.log("\n");
+
+// Card validator tests
+const { cardTypes } = cardsData;
+console.log("Card validator tests:");
+let assertions = [false, false, false, true, true];
+testData = testNumbers.mastercard;
+
+// Mastercard
+const mastercardValidator = createCardValidator(cardTypes.mastercard);
+console.log("Mastercard tests");
+testData.forEach((cardNumber, index) =>
+  verify(mastercardValidator.isValid(cardNumber), assertions[index])
+);
+
+// Visa
+assertions = [true, true, true];
+testData = testNumbers.visa;
+
+const visaValidator = createCardValidator(cardTypes.visa);
+console.log("\nVisa tests");
+testData.forEach((cardNumber, index) =>
+  verify(visaValidator.isValid(cardNumber), assertions[index])
+);
+
+// American Express
+assertions = [true, true, true];
+testData = testNumbers.americanExpress;
+
+const americanExpressValidator = createCardValidator(cardTypes.americanExpress);
+console.log("\nAmerican Express tests");
+testData.forEach((cardNumber, index) =>
+  verify(americanExpressValidator.isValid(cardNumber), assertions[index])
+);

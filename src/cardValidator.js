@@ -1,6 +1,6 @@
 import luhn from "./luhn.js";
 
-export function createCardValidator({ leadingDigits, totalDigits }) {
+export default function createCardValidator({ leadingDigits, totalDigits }) {
   const cardValidator = Object.create(createCardValidator.prototype);
 
   const leadingNumbers = cloneNumArray(leadingDigits);

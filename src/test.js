@@ -1,6 +1,7 @@
 import luhn from "./luhn.js"; // Extension necessary for Node ESM module loader
-import cardsData from "./cardsData.json";
-import { createCardValidator } from "./cardValidator.js";
+import * as cardsData from "./cardsData.js";
+import createCardValidator from "./cardValidator.js";
+import checkCardNumber from "./checkCardNumber.js";
 
 // Tests
 function verify(input, goal) {
@@ -13,14 +14,13 @@ function verify(input, goal) {
 
 const { testNumbers } = cardsData;
 
-// luhn algorithm tests
+// Luhn algorithm tests
 let testData = [
   ...testNumbers.mastercard,
   ...testNumbers.visa,
   ...testNumbers.americanExpress,
 ];
 
-// Failing tests
 const invalidNumbers = [
   testNumbers.mastercard[0] + 3,
   testNumbers.visa[1] * 2,
@@ -43,7 +43,7 @@ testData = testNumbers.mastercard;
 
 // Mastercard
 const mastercardValidator = createCardValidator(cardTypes.mastercard);
-console.log("Mastercard tests");
+console.log("Mastercard tests:");
 testData.forEach((cardNumber, index) =>
   verify(mastercardValidator.isValid(cardNumber), assertions[index])
 );
@@ -53,7 +53,7 @@ assertions = [true, true, true];
 testData = testNumbers.visa;
 
 const visaValidator = createCardValidator(cardTypes.visa);
-console.log("\nVisa tests");
+console.log("\nVisa tests:");
 testData.forEach((cardNumber, index) =>
   verify(visaValidator.isValid(cardNumber), assertions[index])
 );
@@ -63,7 +63,20 @@ assertions = [true, true, true];
 testData = testNumbers.americanExpress;
 
 const americanExpressValidator = createCardValidator(cardTypes.americanExpress);
-console.log("\nAmerican Express tests");
+console.log("\nAmerican Express tests:");
 testData.forEach((cardNumber, index) =>
   verify(americanExpressValidator.isValid(cardNumber), assertions[index])
+);
+
+// Check card number tests
+console.log("\ncheckCardNumber tests:");
+testData = [
+  testNumbers.mastercard[0],
+  testNumbers.mastercard[3],
+  testNumbers.visa[0],
+  testNumbers.americanExpress[0],
+];
+assertions = ["Invalid", "Mastercard", "Visa", "AmericanExpress"];
+testData.forEach((cardNumber, index) =>
+  verify(checkCardNumber(cardNumber), assertions[index])
 );

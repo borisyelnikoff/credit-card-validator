@@ -13,6 +13,8 @@ export default function checkCardNumber(cardNumber) {
       cardVendor = cardName.replace(/^[a-z]/, cardName[0].toUpperCase());
       return true;
     }
+
+    return false;
   });
 
   return cardVendor;
